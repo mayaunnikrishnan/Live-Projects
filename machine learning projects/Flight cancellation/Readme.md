@@ -53,6 +53,8 @@ The dataset has the following columns:
 
 A detailed EDA was performed to understand the dataset, identify patterns, and visualize relationships between features. Key insights from the EDA were used to guide model selection and hyperparameter tuning.
 
+[Click here to view the EDA](https://www.kaggle.com/code/mayaunnikrishnan/flight-cancellation-eda-and-prediction)
+
 ## Model Building and Evaluation
 
 ### Models Used
