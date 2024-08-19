@@ -77,8 +77,10 @@ A TensorFlow Keras model was also built for comparison. This model's performance
 Two Streamlit applications were developed:
 
 1. **Flight Cancellation Prediction with Random Forest**: This application allows users to input flight details and receive a prediction on whether the flight will be canceled or not.
+   [Predict Flight Cancellation Here](https://appapp-flight-cancellation-prediction-ejhdgh7bvjauhxifycmoru.streamlit.app/)
 
-2. **Flight Cancellation Prediction with TensorFlow Keras**: This application provides similar functionality but uses a TensorFlow Keras model for predictions.
+
+3. **Flight Cancellation Prediction with TensorFlow Keras**: This application provides similar functionality but uses a TensorFlow Keras model for predictions.
 
 ## Installation
 
