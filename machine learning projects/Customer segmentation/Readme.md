@@ -1,4 +1,4 @@
-# Customer Segmentation Project
+# Customer Segmentation Project using Agglomerative Clustering
 
 ## Overview
 
