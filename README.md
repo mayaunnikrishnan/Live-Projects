@@ -12,6 +12,7 @@ Welcome to the Live Project repository! These projects were developed for client
 - [LLM Projects](https://github.com/mayaunnikrishnan/Live-Projects/tree/main/LLM%20Projects)
   - [Clinical Summary Generation Project](https://github.com/mayaunnikrishnan/Live-Projects/tree/main/LLM%20Projects/medical%20summary%20generator)
   - [Comprehensive NLP with Transformer and LLM Models for Summarization](https://github.com/mayaunnikrishnan/Live-Projects/tree/main/LLM%20Projects/Text%20Summary%20Generator)
+  - [Ensemble Fine-Tuning of LegalBERT for Indian Court Judgment Classification](https://github.com/mayaunnikrishnan/Live-Projects/tree/main/LLM%20Projects)
 
 
 
