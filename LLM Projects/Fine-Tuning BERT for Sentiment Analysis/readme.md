@@ -63,7 +63,7 @@ This project is particularly useful for enhancing customer engagement on e-comme
 ## Conclusion
 
 By fine-tuning BERT on Indian e-commerce data and integrating it into a customer-facing chatbot and an admin dashboard, this project demonstrates how AI can be applied to improve customer service and product quality in a targeted manner. The integration of sentiment analysis with interactive customer service tools provides a comprehensive approach to understanding and responding to customer needs in real-time.
-
+note - (i didn't uploaded any model folder in flask app ,because fine tuned model is a large file)
 ## Author
 
 **Maya Unnikrishnan**
