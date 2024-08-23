@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+
+<body>
+    <header>
+        <h1>Amazonia Deals</h1>
+        <nav>
+            <ul>
+                <li><a href="#">🏠 Home</a></li>
+                <li><a href="#">🛒 Shop</a></li>
+                <li><a href="#">ℹ️ About</a></li>
+                <li><a href="#">✉️ Contact</a></li>
+            </ul>
+        </nav>
+        <div class="admin-link">
+            <a href="{{ url_for('login') }}">Admin</a>
+        </div>
+
+    </header>
+    <h2 style="margin: 24px;font-size: 36px;padding-top: 10px;">Vivo Horizon</h2>
+    <main>
+        <section id="products"> 
+            <!-- Product listings table -->
+            <table>
+                <tr>
+                    <td class="product">
+                        <img src="{{ url_for('static', filename='images/images1.jpg') }}" alt="Product 1" height="200px" width="200px">
+                        <h3>Vivo Y35s</h3>
+                        <p>$900.99</p>
+                        <button>Add to Cart</button>
+                    </td>
+                    <td class="product">
+                        <img src="{{ url_for('static', filename='images/images2.jpg') }}" alt="Product 1" height="200px" width="200px">
+                        <h3>Vivo S12 Pro</h3>
+                        <p>$800.99</p>
+                        <button>Add to Cart</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="product">
+                        <img src="{{ url_for('static', filename='images/images3.jpg') }}" alt="Product 1" height="200px" width="200px">
+                        <h3>Vivo Y21s</h3>
+                        <p>$800.99</p>
+                        <button>Add to Cart</button>
+                    </td>
+                    <td class="product">
+                        <img src="{{ url_for('static', filename='images/images4.jpg') }}" alt="Product 1" height="200px" width="200px">
+                        <h3>Vivo X70 </h3>
+                        <p>$700.99</p>
+                        <button>Add to Cart</button>
+                    </td>
+                </tr>
+                
+            </table>
+        </section> 
+        <div id="chat-container">
+            <h1>ReviewRover</h1>
+            <div id="chat-messages"></div>
+            <form id="chat-form">
+                <input type="text" id="user-input" name="user_input" placeholder="Type your message...">
+                <button type="submit">Send</button>
+            </form>
+            <div id="feedback-form" style="display: none;">
+                <h2>Feedback Form</h2>
+                <form id="feedback-form-inner" action="/submit_feedback" method="post">
+                    Delivery process:<input type="text" id="feature1">
+                    Product Quality :<input type="text" id="feature2">
+                    Product Information Accuracy :<input type="text" id="feature3">
+                    Payment Security :<input type="text" id="feature4">
+                    Stock Availability :<input type="text" id="feature5">
+                    <button type="submit">Submit Feedback</button>
+                </form>
+            </div>
+        </div>
+        <script>
+            document.getElementById('chat-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const userInput = document.getElementById('user-input').value;
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `user_input=${encodeURIComponent(userInput)}`
+                });
+                const responseText = await response.text();
+                document.getElementById('chat-messages').innerText += `\n${responseText}`;
+        
+                if (responseText.includes('feedback')) {
+                    document.getElementById('feedback-form').style.display = 'block';
+                    document.getElementById('chat-form').style.display = 'none';
+                } else {
+                    document.getElementById('feedback-form').style.display = 'none';
+                    document.getElementById('chat-form').style.display = 'block';
+                }
+        
+                document.getElementById('user-input').value = '';  // Clear chat input
+            });
+        
+            document.getElementById('feedback-form-inner').addEventListener('submit', async function(e) {
+                e.preventDefault();
+            
+                // 1. Collect values from input fields
+                const feature1 = document.getElementById('feature1').value;
+                const feature2 = document.getElementById('feature2').value;
+                const feature3 = document.getElementById('feature3').value;
+                const feature4 = document.getElementById('feature4').value;
+                const feature5 = document.getElementById('feature5').value;
+
+                const body = `feature1=${encodeURIComponent(feature1)}&feature2=${encodeURIComponent(feature2)}&feature3=${encodeURIComponent(feature3)}&feature4=${encodeURIComponent(feature4)}&feature5=${encodeURIComponent(feature5)}`;
+
+                const response = await fetch('/submit_feedback', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: body
+                });
+            
+                // 2. Append values to the DataFrame
+                if (!window.reviews_df || !(window.reviews_df instanceof Array)) {
+                    window.reviews_df = [];
+                }
+                window.reviews_df.push({ 'Delivery process': feature1, 'Product Quality': feature2 ,'Product Information Accuracy': feature3,'Payment Security': feature4,'Stock Availability': feature5});
+            
+               
+            
+                // 4. Hide feedback form and display chat form and messages
+                document.getElementById('feedback-form').style.display = 'none';
+                document.getElementById('chat-form').style.display = 'block';
+                document.getElementById('chat-messages').style.display = 'block';
+            
+                // 5. Append a thank you message to the chat messages container
+                const thankYouMessage = document.createElement('div');
+                thankYouMessage.innerText = "We're glad to receive your feedback!";
+                document.getElementById('chat-messages').appendChild(thankYouMessage);
+            
+                // Plot bar chart representing each purchasing feature
+                const featuresData = window.reviews_df.reduce((acc, curr) => {
+                    for (const key in curr) {
+                        if (acc[key]) {
+                            acc[key].push(curr[key]);
+                        } else {
+                            acc[key] = [curr[key]];
+                        }
+                    }
+                    return acc;
+                }, {});
+            
+                const canvas = document.createElement('canvas');
+                canvas.id = 'bar-chart';
+                document.getElementById('chat-messages').appendChild(canvas);
+            
+                const ctx = canvas.getContext('2d');
+                const labels = Object.keys(featuresData);
+                const data = {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Rating',
+                        data: labels.map(label => featuresData[label].reduce((acc, curr) => acc + parseInt(curr), 0) / featuresData[label].length),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                };
+            
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            
+                // Find purchasing feature with lowest rating
+                const lowestFeature = Object.keys(featuresData).reduce((minFeature, feature) => {
+                    const averageRating = featuresData[feature].reduce((acc, curr) => acc + parseInt(curr), 0) / featuresData[feature].length;
+                    if (minFeature === null || averageRating < featuresData[minFeature].reduce((acc, curr) => acc + parseInt(curr), 0) / featuresData[minFeature].length) {
+                        return feature;
+                    } else {
+                        return minFeature;
+                    }
+                }, null);
+            
+                // Ask for advice on improving the purchasing feature with the lowest rating
+                const adviceMessage = document.createElement('div');
+                adviceMessage.innerText = `We noticed that ${lowestFeature} has the lowest rating. Do you have any advice on how we can improve it further?`;
+                document.getElementById('chat-messages').appendChild(adviceMessage);
+                // Add input box for advice
+                const adviceInput = document.createElement('input');
+                adviceInput.type = 'text';
+                adviceInput.id = 'advice-input';
+                adviceInput.placeholder = 'Enter your advice...';
+                adviceInput.style.width = '900px';
+                adviceInput.style.height = '50px';
+                
+                document.getElementById('chat-messages').appendChild(adviceInput);
+            
+                // Add submit button for advice
+                // Add submit button for advice
+const submitButton = document.createElement('button');
+submitButton.innerText = 'Submit Advice';
+submitButton.addEventListener('click', async function(e) {
+    e.preventDefault();
+    const advice = document.getElementById('advice-input').value;
+
+    try {
+        const response = await fetch('/advice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `advice=${encodeURIComponent(advice)}`
+        });
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        // Optionally handle the response data with handleUserAdvice if needed
+        // handleUserAdvice(advice);
+
+        // Append a thank you message to the chat messages container
+        const thankYouMessageAfterAdvice = document.createElement('div');
+        thankYouMessageAfterAdvice.innerText = 'Thank you for sharing your thoughts!';
+        document.getElementById('chat-messages').appendChild(thankYouMessageAfterAdvice);
+
+        // Clear advice input field and potentially hide or remove UI elements
+        document.getElementById('advice-input').value = '';
+        document.getElementById('advice-input').style.display = 'none';
+        submitButton.style.display = 'none';
+
+        } catch (error) {
+        console.error('Failed to submit advice:', error);
+        // Optionally, inform the user that the submission failed
+        }
+    });
+
+    document.getElementById('chat-messages').appendChild(submitButton);
+    document.getElementById('user-input').style.display = 'none';
+    document.querySelector('button[type="submit"]').style.display = 'none';
+
+                
+    });
+           
+            
+
+        </script>
+        
+        
+    <footer>
+        <p>&copy; 2024 My Shopping Site</p>
+    </footer>
+</body>
+
+</html>
+
